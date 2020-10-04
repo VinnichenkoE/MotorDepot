@@ -1,10 +1,11 @@
 package com.vinnichenko.motorDepot.dao.impl;
 
 
-
 import com.vinnichenko.motorDepot.connection.ConnectionPool;
 import com.vinnichenko.motorDepot.dao.BidDao;
 import com.vinnichenko.motorDepot.entity.Bid;
+import com.vinnichenko.motorDepot.exception.ConnectionException;
+import com.vinnichenko.motorDepot.exception.DaoException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,12 +16,12 @@ public class BidDaoImpl implements BidDao {
     private static final String SQL_PENDING_BIDS = "select bid_id, number_of_seats, start_date, start_point, end_point, distance, status from bids b inner join bid_statuses bs on b.status_id = bs.status_id where bs.status_id = 1;";
 
     @Override
-    public List<Bid> pendingBids() {
-        Statement statement = null;
-        ResultSet resultSet = null;
+    public List<Bid> pendingBids() throws DaoException {
+        Statement statement;
+        ResultSet resultSet;
         List<Bid> bids = new ArrayList<>();
-        Connection connection = ConnectionPool.INSTANCE.getConnection();
         try {
+            Connection connection = ConnectionPool.getInstance().getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery(SQL_PENDING_BIDS);
             while (resultSet.next()) {
@@ -33,9 +34,10 @@ public class BidDaoImpl implements BidDao {
                 String status = resultSet.getString("status");
                 Bid bid = new Bid(id, numberOfSeats, date, startPoint, endPoint, distance, status);
                 bids.add(bid);
+                connection.close();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();  //TODO
+        } catch (SQLException | ConnectionException e) {
+            throw new DaoException(e);
         }
         return bids;
     }
