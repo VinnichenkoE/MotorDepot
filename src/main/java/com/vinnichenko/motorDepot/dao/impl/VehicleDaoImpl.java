@@ -13,29 +13,37 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.vinnichenko.motorDepot.dao.ColumnLabel.*;
+
 public class VehicleDaoImpl implements VehicleDao {
+
+    ConnectionPool pool = ConnectionPool.getInstance();
 
     private static final String SQL_SELECT_ALL = "SELECT DISTINCT brand, model, number_of_seats FROM vehicles;";
 
     @Override
     public Set<Vehicle> getAllUnique() throws DaoException {
-        Statement statement;
-        ResultSet resultSet;
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         Set<Vehicle> vehicles = new HashSet<>();
         try {
-            Connection connection = ConnectionPool.getInstance().getConnection();
+            connection = pool.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery(SQL_SELECT_ALL);
             while (resultSet.next()) {
-                String brand = resultSet.getString("brand");
-                String model = resultSet.getString("model");
-                int numberOfSeats = resultSet.getInt("number_of_seats");
+                String brand = resultSet.getString(VEHICLE_BRAND);
+                String model = resultSet.getString(VEHICLE_MODEL);
+                int numberOfSeats = resultSet.getInt(VEHICLE_NUMBER_OF_SEATS);
                 Vehicle vehicle = new Vehicle(brand, model, numberOfSeats);
                 vehicles.add(vehicle);
-                connection.close();
             }
         } catch (SQLException | ConnectionException e) {
             throw new DaoException(e);
+        } finally {
+            pool.closeResultSet(resultSet);
+            pool.closeStatement(statement);
+            pool.releaseConnection(connection);
         }
         return vehicles;
     }

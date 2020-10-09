@@ -11,23 +11,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
+import static com.vinnichenko.motorDepot.controller.command.SessionParameter.*;
+
 public class Authorization implements Command {
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UserService userService = ServiceFactory.getInstance().getUserService();
-        String login = req.getParameter("login");
-        String password  = req.getParameter("password");
-        User user = null;
+        String login = req.getParameter(USER_LOGIN);
+        String password  = req.getParameter(USER_PASSWORD);
+        User user;
         try {
             user = userService.getUserByLogin(login);
-            if (password.equals(user.getPassword())) {
+            if (user != null && user.getPassword().equals(password)) {
                 SessionData sessionData = new SessionData(user.getName(), user.getStatus());
-                req.getSession().setAttribute("data", sessionData);
+                req.getSession().setAttribute(USER_DATA, sessionData);
             }
             resp.sendRedirect("controller?commandName=welcome_page");
         } catch (ServiceException e) {
             resp.sendRedirect("WEB-INF/jsp/error_page.jsp");
         }
-
     }
 }

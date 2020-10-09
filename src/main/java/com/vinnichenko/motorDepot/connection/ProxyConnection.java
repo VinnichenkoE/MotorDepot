@@ -1,7 +1,5 @@
 package com.vinnichenko.motorDepot.connection;
 
-import com.vinnichenko.motorDepot.exception.ConnectionException;
-
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
@@ -56,11 +54,7 @@ public class ProxyConnection implements Connection {
 
     @Override
     public void close() {
-        try {
-            ConnectionPool.getInstance().realiseConnection(this);
-        } catch (ConnectionException e) {
-            //TODO
-        }
+        ConnectionPool.getInstance().releaseConnection(this);
     }
 
     void reallyClose() throws SQLException {

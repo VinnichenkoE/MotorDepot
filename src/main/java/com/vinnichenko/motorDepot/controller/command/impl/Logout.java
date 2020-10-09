@@ -7,9 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class Registration implements Command {
+import static com.vinnichenko.motorDepot.controller.command.SessionParameter.*;
+
+public class Logout implements Command {
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/jsp/registration.jsp").forward(req, resp);
+        req.getSession().removeAttribute(USER_DATA);
+        req.getRequestDispatcher("controller?commandName=welcome_page").forward(req, resp);
     }
 }

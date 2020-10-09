@@ -5,5 +5,6 @@ public enum CommandName {
     WRONG_COMMAND,
     SAVE_USER,
     REGISTRATION,
-    AUTHORIZATION
+    AUTHORIZATION,
+    LOGOUT
 }

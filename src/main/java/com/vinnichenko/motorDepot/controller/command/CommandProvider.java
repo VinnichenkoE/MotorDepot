@@ -16,6 +16,7 @@ public class CommandProvider {
         repository.put(CommandName.SAVE_USER, new SaveUser());
         repository.put(CommandName.REGISTRATION, new Registration());
         repository.put(CommandName.AUTHORIZATION, new Authorization());
+        repository.put(CommandName.LOGOUT, new Logout());
     }
 
     public static CommandProvider getInstance() {

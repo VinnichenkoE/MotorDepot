@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
     public boolean saveUser(User user) throws ServiceException {
         DaoFactory daoFactory = DaoFactory.getInstance();
         UserDao userDao = daoFactory.getUserDao();
-        boolean result = false;
+        boolean result;
         try {
             result = userDao.saveUser(user);
         } catch (SQLException | DaoException e) {
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public User getUserByLogin(String login) throws ServiceException {
         DaoFactory daoFactory = DaoFactory.getInstance();
         UserDao userDao = daoFactory.getUserDao();
-        User user = null;
+        User user;
         try {
             user = userDao.getUserByLogin(login);
         } catch (SQLException | DaoException e) {

@@ -6,7 +6,12 @@ import com.vinnichenko.motorDepot.entity.User;
 import com.vinnichenko.motorDepot.exception.ConnectionException;
 import com.vinnichenko.motorDepot.exception.DaoException;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static com.vinnichenko.motorDepot.dao.ColumnLabel.*;
 
 public class UserDaoImpl implements UserDao {
 
@@ -14,18 +19,23 @@ public class UserDaoImpl implements UserDao {
     private static final String SQL_SELECT_USER_STATUS = "SELECT status_id FROM user_statuses WHERE status = ?;";
     private static final String SQL_SELECT_USER = "SELECT u.password, u.name, u.surname, u.phone_number, us.status FROM users u INNER JOIN user_statuses us ON u.status_id = us.status_id WHERE u.login = ?;";
 
+    ConnectionPool pool = ConnectionPool.getInstance();
+
     @Override
     public boolean saveUser(User user) throws DaoException {
         boolean result = false;
-        Connection connection;
+        Connection connection = null;
+        PreparedStatement selectStatement = null;
+        PreparedStatement insertStatement = null;
+        ResultSet resultSet = null;
         try {
-            connection = ConnectionPool.getInstance().getConnection();
-            PreparedStatement selectStatement = connection.prepareStatement(SQL_SELECT_USER_STATUS);
+            connection = pool.getConnection();
+            selectStatement = connection.prepareStatement(SQL_SELECT_USER_STATUS);
             selectStatement.setString(1, user.getStatus());
-            ResultSet resultSet = selectStatement.executeQuery();
+            resultSet = selectStatement.executeQuery();
             if (resultSet.next()) {
-                int statusId = resultSet.getInt("status_id");
-                PreparedStatement insertStatement = connection.prepareStatement(SQL_INSERT_USER);
+                int statusId = resultSet.getInt(STATUS_ID);
+                insertStatement = connection.prepareStatement(SQL_INSERT_USER);
                 insertStatement.setString(1, user.getLogin());
                 insertStatement.setString(2, user.getPassword());
                 insertStatement.setString(3, user.getName());
@@ -33,33 +43,43 @@ public class UserDaoImpl implements UserDao {
                 insertStatement.setLong(5, user.getPhoneNumber());
                 insertStatement.setInt(6, statusId);
                 result = insertStatement.execute();
-                connection.close();
             }
-        } catch (ConnectionException | SQLException e) {
+        } catch (SQLException | ConnectionException e) {
             throw new DaoException(e);
+        } finally {
+            pool.closeResultSet(resultSet);
+            pool.closeStatement(selectStatement);
+            pool.closeStatement(insertStatement);
+            pool.releaseConnection(connection);
         }
         return result;
     }
 
     @Override
     public User getUserByLogin(String login) throws DaoException {
-        Connection connection;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         User user = null;
         try {
             connection = ConnectionPool.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER);
+            preparedStatement = connection.prepareStatement(SQL_SELECT_USER);
             preparedStatement.setString(1, login);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String password = resultSet.getString("password"); //TODO
-                String name = resultSet.getString("name");
-                String surname = resultSet.getString("surname");
-                long phoneNumber = resultSet.getLong("phone_number");
-                String status = resultSet.getString("status");
+                String password = resultSet.getString(USER_PASSWORD);
+                String name = resultSet.getString(USER_NAME);
+                String surname = resultSet.getString(USER_SURNAME);
+                long phoneNumber = resultSet.getLong(USER_PHONE_NUMBER);
+                String status = resultSet.getString(STATUS_STATUS);
                 user = new User(login, password, name, surname, phoneNumber, status);
             }
         } catch (ConnectionException | SQLException e) {
             throw new DaoException(e);
+        } finally {
+            pool.closeResultSet(resultSet);
+            pool.closeStatement(preparedStatement);
+            pool.releaseConnection(connection);
         }
         return user;
     }
