@@ -1,6 +1,8 @@
 package com.vinnichenko.motorDepot.entity;
 
-public class Vehicle {
+import java.io.Serializable;
+
+public class Vehicle implements Serializable {
     private int id;
     private String brand;
     private String model;
@@ -8,6 +10,9 @@ public class Vehicle {
     private int numberOfSeats;
     private String status;
     private User user;
+
+    public Vehicle(){
+    }
 
     public Vehicle(int id, String brand, String model, String registrationNumber, int numberOfSeats, String status, User user) {
         this.id = id;
@@ -23,9 +28,6 @@ public class Vehicle {
         this.brand = brand;
         this.model = model;
         this.numberOfSeats = numberOfSeats;
-    }
-
-    public Vehicle(){
     }
 
     public int getId() {

@@ -1,8 +1,9 @@
 package com.vinnichenko.motorDepot.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Bid {
+public class Bid implements Serializable {
     private int id;
     private int number_of_seats;
     private Date startDate;
@@ -11,7 +12,8 @@ public class Bid {
     private int distance;
     private String status;
 
-    public Bid() {}
+    public Bid() {
+    }
 
     public Bid(int id, int number_of_seats, Date startDate, String startPoint, String endPoint, int distance, String status) {
         this.id = id;

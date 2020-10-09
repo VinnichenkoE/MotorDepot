@@ -1,6 +1,8 @@
 package com.vinnichenko.motorDepot.entity;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private int id;
     private String login;
     private String password;
@@ -8,6 +10,9 @@ public class User {
     private String surname;
     private long phoneNumber;
     private String status;
+
+    public User(){
+    }
 
     public User(int id, String login, String password, String name, String surname, long phoneNumber, String status) {
         this.id = id;
@@ -26,9 +31,6 @@ public class User {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.status = status;
-    }
-
-    public User(){
     }
 
     public int getId() {

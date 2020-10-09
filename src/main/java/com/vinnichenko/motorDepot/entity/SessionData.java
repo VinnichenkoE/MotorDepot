@@ -1,8 +1,13 @@
 package com.vinnichenko.motorDepot.entity;
 
-public class SessionData {
+import java.io.Serializable;
+
+public class SessionData implements Serializable {
     String name;
     String status;
+
+    public SessionData() {
+    }
 
     public SessionData(String name, String status) {
         this.name = name;
