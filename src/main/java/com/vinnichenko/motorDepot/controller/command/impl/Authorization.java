@@ -6,6 +6,8 @@ import com.vinnichenko.motorDepot.entity.User;
 import com.vinnichenko.motorDepot.exception.ServiceException;
 import com.vinnichenko.motorDepot.service.ServiceFactory;
 import com.vinnichenko.motorDepot.service.UserService;
+import com.vinnichenko.motorDepot.util.PasswordEncoder;
+import com.vinnichenko.motorDepot.util.exception.UtilException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,12 +25,12 @@ public class Authorization implements Command {
         User user;
         try {
             user = userService.getUserByLogin(login);
-            if (user != null && user.getPassword().equals(password)) {
+            if (user != null && PasswordEncoder.check(password, user.getPassword())) {
                 SessionData sessionData = new SessionData(user.getName(), user.getStatus());
                 req.getSession().setAttribute(USER_DATA, sessionData);
             }
             resp.sendRedirect("controller?commandName=welcome_page");
-        } catch (ServiceException e) {
+        } catch (ServiceException |UtilException e) {
             resp.sendRedirect("WEB-INF/jsp/error_page.jsp");
         }
     }

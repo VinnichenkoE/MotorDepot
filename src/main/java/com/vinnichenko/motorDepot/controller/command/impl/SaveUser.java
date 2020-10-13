@@ -6,6 +6,8 @@ import com.vinnichenko.motorDepot.entity.User;
 import com.vinnichenko.motorDepot.exception.ServiceException;
 import com.vinnichenko.motorDepot.service.ServiceFactory;
 import com.vinnichenko.motorDepot.service.UserService;
+import com.vinnichenko.motorDepot.util.PasswordEncoder;
+import com.vinnichenko.motorDepot.util.exception.UtilException;
 import com.vinnichenko.motorDepot.validator.UserValidator;
 
 import javax.servlet.ServletException;
@@ -37,8 +39,9 @@ public class SaveUser implements Command {
             User user = userService.getUserByLogin(login);
             if (UserValidator.isUserDataValid(login, password, name, surname, stringPhoneNumber)
                     && user == null) {
+                String encodingPassword = PasswordEncoder.getSaltedHash(password);
                 long phoneNumber = Long.parseLong(stringPhoneNumber);
-                User newUser = new User(login, password, name, surname, phoneNumber, USER_STATUS);
+                User newUser = new User(login, encodingPassword, name, surname, phoneNumber, USER_STATUS);
                 userService.saveUser(newUser);
                 SessionData sessionData = new SessionData(name, USER_STATUS);
                 req.getSession().setAttribute(USER_DATA, sessionData);
@@ -61,7 +64,7 @@ public class SaveUser implements Command {
                 }
                 req.getRequestDispatcher("WEB-INF/jsp/registration.jsp").forward(req, resp);
             }
-        } catch (ServiceException e) {
+        } catch (ServiceException |UtilException e) {
             resp.sendRedirect("WEB-INF/jsp/error_page.jsp");
         }
     }
