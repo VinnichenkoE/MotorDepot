@@ -4,6 +4,7 @@ import com.vinnichenko.motorDepot.entity.User;
 import com.vinnichenko.motorDepot.exception.ServiceException;
 
 public interface UserService {
-    boolean saveUser(User user) throws ServiceException;
-    User getUserByLogin(String login) throws ServiceException;
+    boolean saveUser(String login, String password, String name, String surname, String phoneNumber, String status) throws ServiceException;
+    User findUserByLogin(String login) throws ServiceException;
+    boolean isLoginExist(String login) throws ServiceException;
 }

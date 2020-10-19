@@ -3,15 +3,25 @@ package com.vinnichenko.motorDepot.entity;
 import java.io.Serializable;
 
 public class SessionData implements Serializable {
+    int id;
     String name;
     String status;
 
     public SessionData() {
     }
 
-    public SessionData(String name, String status) {
+    public SessionData(int id, String name, String status) {
+        this.id = id;
         this.name = name;
         this.status = status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -30,31 +40,4 @@ public class SessionData implements Serializable {
         this.status = status;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SessionData that = (SessionData) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null)
-            return false;
-        return status != null ? status.equals(that.status) : that.status == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("SessionData{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", status='").append(status).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
 }

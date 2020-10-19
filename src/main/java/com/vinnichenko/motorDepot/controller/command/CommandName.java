@@ -6,5 +6,9 @@ public enum CommandName {
     SAVE_USER,
     REGISTRATION,
     AUTHORIZATION,
-    LOGOUT
+    LOGOUT,
+    ACCOUNT,
+    APPOINT_DRIVER,
+    ADD_BID,
+    SAVE_BID
 }

@@ -17,6 +17,10 @@ public class CommandProvider {
         repository.put(CommandName.REGISTRATION, new Registration());
         repository.put(CommandName.AUTHORIZATION, new Authorization());
         repository.put(CommandName.LOGOUT, new Logout());
+        repository.put(CommandName.ACCOUNT, new Account());
+        repository.put(CommandName.APPOINT_DRIVER, new AppointDriver());
+        repository.put(CommandName.ADD_BID, new AddBid());
+        repository.put(CommandName.SAVE_BID, new SaveBid());
     }
 
     public static CommandProvider getInstance() {

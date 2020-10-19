@@ -7,13 +7,14 @@ import java.util.regex.Pattern;
 
 import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
 
-public class UserValidator {
+public class DataValidator {
 
     private static final String LOGIN_REGEX = "[\\d\\p{LC}]{2,12}";
     private static final String PASSWORD_REGEX = "[\\d\\p{LC}]{4,16}";
     private static final String NAME_REGEX = "\\p{LC}{2,35}";
     private static final String SURNAME_REGEX = "\\p{LC}{2,50}";
     private static final String PHONE_NUMBER_REGEX = "\\d{9}";
+    private static final String NUMBER_REGEX = "\\d+";
 
     public static boolean isLoginValid(String login) {
         Pattern pattern = Pattern.compile(LOGIN_REGEX);
@@ -61,6 +62,12 @@ public class UserValidator {
         result.put(new String[]{USER_SURNAME, surname}, isSurnameValid(surname));
         result.put(new String[]{USER_PHONE_NUMBER, phoneNumber}, isPhoneNumberValid(phoneNumber));
         return result;
+    }
+
+    public static boolean isNumber(String number) {
+        Pattern pattern = Pattern.compile(NUMBER_REGEX);
+        Matcher matcher = pattern.matcher(number);
+        return matcher.matches();
     }
 
 }

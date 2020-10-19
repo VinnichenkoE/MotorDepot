@@ -1,15 +1,12 @@
 package com.vinnichenko.motorDepot.service;
 
-import com.vinnichenko.motorDepot.entity.Vehicle;
-import com.vinnichenko.motorDepot.exception.ServiceException;
 import com.vinnichenko.motorDepot.service.impl.BidServiceImpl;
 import com.vinnichenko.motorDepot.service.impl.UserServiceImpl;
 import com.vinnichenko.motorDepot.service.impl.VihecleServiceImpl;
 
-import java.util.Set;
-
 public final class ServiceFactory {
-    private static final ServiceFactory instance = new ServiceFactory();
+
+    private static final ServiceFactory INSTANCE = new ServiceFactory();
 
     private final UserService userService = new UserServiceImpl();
     private final BidService bidService = new BidServiceImpl();
@@ -32,6 +29,6 @@ public final class ServiceFactory {
     }
 
     public static ServiceFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

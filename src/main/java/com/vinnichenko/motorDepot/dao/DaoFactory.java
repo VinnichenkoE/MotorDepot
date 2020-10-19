@@ -5,7 +5,8 @@ import com.vinnichenko.motorDepot.dao.impl.UserDaoImpl;
 import com.vinnichenko.motorDepot.dao.impl.VehicleDaoImpl;
 
 public final class DaoFactory {
-    private static final DaoFactory instance = new DaoFactory();
+    
+    private static final DaoFactory INSTANCE = new DaoFactory();
 
     private final UserDao userDao = new UserDaoImpl();
     private final BidDao bidDao = new BidDaoImpl();
@@ -27,6 +28,6 @@ public final class DaoFactory {
     }
 
     public static DaoFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

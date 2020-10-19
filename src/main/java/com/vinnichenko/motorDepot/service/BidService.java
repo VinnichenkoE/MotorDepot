@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BidService {
     List<Bid> pendingBids() throws ServiceException;
+    Bid findBidById(String id) throws ServiceException;
+    boolean addBid(int userId, Bid bid) throws ServiceException;
 }

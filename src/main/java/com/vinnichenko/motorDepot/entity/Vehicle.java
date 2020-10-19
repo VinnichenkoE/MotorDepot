@@ -8,20 +8,20 @@ public class Vehicle implements Serializable {
     private String model;
     private String registrationNumber;
     private int numberOfSeats;
-    private String status;
-    private User user;
+    private int status_id;
+    private int user_id;
 
     public Vehicle(){
     }
 
-    public Vehicle(int id, String brand, String model, String registrationNumber, int numberOfSeats, String status, User user) {
+    public Vehicle(int id, String brand, String model, String registrationNumber, int numberOfSeats, int status_id, int user_id) {
         this.id = id;
         this.brand = brand;
         this.model = model;
         this.registrationNumber = registrationNumber;
         this.numberOfSeats = numberOfSeats;
-        this.status = status;
-        this.user = user;
+        this.status_id = status_id;
+        this.user_id = user_id;
     }
 
     public Vehicle(String brand, String model, int numberOfSeats) {
@@ -70,20 +70,20 @@ public class Vehicle implements Serializable {
         this.numberOfSeats = numberOfSeats;
     }
 
-    public String getStatus() {
-        return status;
+    public int getStatus_id() {
+        return status_id;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus_id(int status_id) {
+        this.status_id = status_id;
     }
 
-    public User getUser() {
-        return user;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     @Override
@@ -93,17 +93,26 @@ public class Vehicle implements Serializable {
 
         Vehicle vehicle = (Vehicle) o;
 
+        if (id != vehicle.id) return false;
         if (numberOfSeats != vehicle.numberOfSeats) return false;
+        if (status_id != vehicle.status_id) return false;
+        if (user_id != vehicle.user_id) return false;
         if (brand != null ? !brand.equals(vehicle.brand) : vehicle.brand != null)
             return false;
-        return model != null ? model.equals(vehicle.model) : vehicle.model == null;
+        if (model != null ? !model.equals(vehicle.model) : vehicle.model != null)
+            return false;
+        return registrationNumber != null ? registrationNumber.equals(vehicle.registrationNumber) : vehicle.registrationNumber == null;
     }
 
     @Override
     public int hashCode() {
-        int result = brand != null ? brand.hashCode() : 0;
+        int result = id;
+        result = 31 * result + (brand != null ? brand.hashCode() : 0);
         result = 31 * result + (model != null ? model.hashCode() : 0);
+        result = 31 * result + (registrationNumber != null ? registrationNumber.hashCode() : 0);
         result = 31 * result + numberOfSeats;
+        result = 31 * result + status_id;
+        result = 31 * result + user_id;
         return result;
     }
 
@@ -115,8 +124,8 @@ public class Vehicle implements Serializable {
         sb.append(", model='").append(model).append('\'');
         sb.append(", registrationNumber='").append(registrationNumber).append('\'');
         sb.append(", numberOfSeats=").append(numberOfSeats);
-        sb.append(", status='").append(status).append('\'');
-        sb.append(", user=").append(user);
+        sb.append(", status_id=").append(status_id);
+        sb.append(", user_id=").append(user_id);
         sb.append('}');
         return sb.toString();
     }

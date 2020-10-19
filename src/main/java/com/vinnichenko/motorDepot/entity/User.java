@@ -8,13 +8,13 @@ public class User implements Serializable {
     private String password;
     private String name;
     private String surname;
-    private long phoneNumber;
+    private String phoneNumber;
     private String status;
 
     public User(){
     }
 
-    public User(int id, String login, String password, String name, String surname, long phoneNumber, String status) {
+    public User(int id, String login, String password, String name, String surname, String phoneNumber, String status) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -24,7 +24,7 @@ public class User implements Serializable {
         this.status = status;
     }
 
-    public User(String login, String password, String name, String surname, long phoneNumber, String status) {
+    public User(String login, String password, String name, String surname, String phoneNumber, String status) {
         this.login = login;
         this.password = password;
         this.name = name;
@@ -73,11 +73,11 @@ public class User implements Serializable {
         this.surname = surname;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -97,7 +97,6 @@ public class User implements Serializable {
         User user = (User) o;
 
         if (id != user.id) return false;
-        if (phoneNumber != user.phoneNumber) return false;
         if (login != null ? !login.equals(user.login) : user.login != null)
             return false;
         if (password != null ? !password.equals(user.password) : user.password != null)
@@ -105,6 +104,8 @@ public class User implements Serializable {
         if (name != null ? !name.equals(user.name) : user.name != null)
             return false;
         if (surname != null ? !surname.equals(user.surname) : user.surname != null)
+            return false;
+        if (phoneNumber != null ? !phoneNumber.equals(user.phoneNumber) : user.phoneNumber != null)
             return false;
         return status != null ? status.equals(user.status) : user.status == null;
     }
@@ -116,7 +117,7 @@ public class User implements Serializable {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (surname != null ? surname.hashCode() : 0);
-        result = 31 * result + (int) (phoneNumber ^ (phoneNumber >>> 32));
+        result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
@@ -129,7 +130,7 @@ public class User implements Serializable {
         sb.append(", password='").append(password).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", surname='").append(surname).append('\'');
-        sb.append(", phoneNumber=").append(phoneNumber);
+        sb.append(", phoneNumber='").append(phoneNumber).append('\'');
         sb.append(", status='").append(status).append('\'');
         sb.append('}');
         return sb.toString();

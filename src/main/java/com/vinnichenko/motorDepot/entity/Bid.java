@@ -1,29 +1,49 @@
 package com.vinnichenko.motorDepot.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class Bid implements Serializable {
+
+    public enum BidStatus {
+        PENDING,
+        IN_PROCESS,
+        COMPLETE
+    }
     private int id;
     private int number_of_seats;
-    private Date startDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
     private String startPoint;
     private String endPoint;
     private int distance;
-    private String status;
+    private BidStatus status;
 
     public Bid() {
     }
 
-    public Bid(int id, int number_of_seats, Date startDate, String startPoint, String endPoint, int distance, String status) {
-        this.id = id;
+    public Bid(int number_of_seats, Timestamp startDate, Timestamp endDate, String startPoint, String endPoint, int distance, BidStatus status) {
         this.number_of_seats = number_of_seats;
         this.startDate = startDate;
+        this.endDate = endDate;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.distance = distance;
         this.status = status;
     }
+
+    public Bid(int id, int number_of_seats, Timestamp startDate, Timestamp endDate, String startPoint, String endPoint, int distance, BidStatus status) {
+        this.id = id;
+        this.number_of_seats = number_of_seats;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.distance = distance;
+        this.status = status;
+    }
+
 
     public int getId() {
         return id;
@@ -41,12 +61,20 @@ public class Bid implements Serializable {
         this.number_of_seats = number_of_seats;
     }
 
-    public Date getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
     }
 
     public String getStartPoint() {
@@ -73,11 +101,11 @@ public class Bid implements Serializable {
         this.distance = distance;
     }
 
-    public String getStatus() {
+    public BidStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(BidStatus status) {
         this.status = status;
     }
 
@@ -93,11 +121,13 @@ public class Bid implements Serializable {
         if (distance != bid.distance) return false;
         if (startDate != null ? !startDate.equals(bid.startDate) : bid.startDate != null)
             return false;
+        if (endDate != null ? !endDate.equals(bid.endDate) : bid.endDate != null)
+            return false;
         if (startPoint != null ? !startPoint.equals(bid.startPoint) : bid.startPoint != null)
             return false;
         if (endPoint != null ? !endPoint.equals(bid.endPoint) : bid.endPoint != null)
             return false;
-        return status != null ? status.equals(bid.status) : bid.status == null;
+        return status == bid.status;
     }
 
     @Override
@@ -105,6 +135,7 @@ public class Bid implements Serializable {
         int result = id;
         result = 31 * result + number_of_seats;
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         result = 31 * result + (startPoint != null ? startPoint.hashCode() : 0);
         result = 31 * result + (endPoint != null ? endPoint.hashCode() : 0);
         result = 31 * result + distance;
@@ -118,6 +149,7 @@ public class Bid implements Serializable {
         sb.append("id=").append(id);
         sb.append(", number_of_seats=").append(number_of_seats);
         sb.append(", startDate=").append(startDate);
+        sb.append(", endDate=").append(endDate);
         sb.append(", startPoint='").append(startPoint).append('\'');
         sb.append(", endPoint='").append(endPoint).append('\'');
         sb.append(", distance=").append(distance);

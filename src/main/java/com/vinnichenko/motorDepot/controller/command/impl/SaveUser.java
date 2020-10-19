@@ -2,13 +2,10 @@ package com.vinnichenko.motorDepot.controller.command.impl;
 
 import com.vinnichenko.motorDepot.controller.command.Command;
 import com.vinnichenko.motorDepot.entity.SessionData;
-import com.vinnichenko.motorDepot.entity.User;
 import com.vinnichenko.motorDepot.exception.ServiceException;
 import com.vinnichenko.motorDepot.service.ServiceFactory;
 import com.vinnichenko.motorDepot.service.UserService;
-import com.vinnichenko.motorDepot.util.PasswordEncoder;
-import com.vinnichenko.motorDepot.util.exception.UtilException;
-import com.vinnichenko.motorDepot.validator.UserValidator;
+import com.vinnichenko.motorDepot.validator.DataValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
-import static com.vinnichenko.motorDepot.controller.command.SessionParameter.*;
+import static com.vinnichenko.motorDepot.controller.command.SessionParameter.USER_DATA;
 
 public class SaveUser implements Command {
 
@@ -33,39 +30,37 @@ public class SaveUser implements Command {
         String password = req.getParameter(USER_PASSWORD);
         String name = req.getParameter(USER_NAME);
         String surname = req.getParameter(USER_SURNAME);
-        String stringPhoneNumber = req.getParameter(USER_PHONE_NUMBER);
-
+        String phoneNumber = req.getParameter(USER_PHONE_NUMBER);
         try {
-            User user = userService.getUserByLogin(login);
-            if (UserValidator.isUserDataValid(login, password, name, surname, stringPhoneNumber)
-                    && user == null) {
-                String encodingPassword = PasswordEncoder.getSaltedHash(password);
-                long phoneNumber = Long.parseLong(stringPhoneNumber);
-                User newUser = new User(login, encodingPassword, name, surname, phoneNumber, USER_STATUS);
-                userService.saveUser(newUser);
-                SessionData sessionData = new SessionData(name, USER_STATUS);
-                req.getSession().setAttribute(USER_DATA, sessionData);
-                resp.sendRedirect("controller?commandName=welcome_page");
-            } else {
-                req.setAttribute(MESSAGE, WRONG_VALUES);
-                if (user != null) {
-                    req.setAttribute(MESSAGE, USER_EXIST);
-                }
-                if (UserValidator.isLoginValid(login) && user == null) {
+            if (DataValidator.isLoginValid(login) && !userService.isLoginExist(login)) {
+                if (userService.saveUser(login, password, name, surname, phoneNumber, USER_STATUS)) {
+                    SessionData sessionData = new SessionData(3, name, USER_STATUS);
+                    req.getSession().setAttribute(USER_DATA, sessionData);
+                    resp.sendRedirect("controller?commandName=welcome_page");
+                } else {
+                    req.setAttribute(MESSAGE, WRONG_VALUES);
                     req.setAttribute(USER_LOGIN, login);
+                    fillCorrectData(req, name, surname, phoneNumber);
+                    req.getRequestDispatcher("WEB-INF/jsp/registration.jsp").forward(req, resp);
                 }
-                Map<String[], Boolean> validateData =
-                        UserValidator.validateUserData(name, surname, stringPhoneNumber);
-                Set<Map.Entry<String[], Boolean>> entrySet = validateData.entrySet();
-                for (Map.Entry<String[], Boolean> el : entrySet) {
-                    if (el.getValue()) {
-                        req.setAttribute(el.getKey()[0], el.getKey()[1]);
-                    }
-                }
+            } else {
+                req.setAttribute(MESSAGE, USER_EXIST);
+                fillCorrectData(req, name, surname, phoneNumber);
                 req.getRequestDispatcher("WEB-INF/jsp/registration.jsp").forward(req, resp);
             }
-        } catch (ServiceException |UtilException e) {
-            resp.sendRedirect("WEB-INF/jsp/error_page.jsp");
+        } catch (ServiceException e) {
+            req.getRequestDispatcher("WEB-INF/jsp/error_page.jsp").forward(req, resp);
+        }
+    }
+
+    private void fillCorrectData(HttpServletRequest req, String name, String surname, String phoneNumber) {
+        Map<String[], Boolean> validateData =
+                DataValidator.validateUserData(name, surname, phoneNumber);
+        Set<Map.Entry<String[], Boolean>> entrySet = validateData.entrySet();
+        for (Map.Entry<String[], Boolean> el : entrySet) {
+            if (el.getValue()) {
+                req.setAttribute(el.getKey()[0], el.getKey()[1]);
+            }
         }
     }
 }

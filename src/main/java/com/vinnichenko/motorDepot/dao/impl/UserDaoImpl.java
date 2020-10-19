@@ -17,7 +17,8 @@ public class UserDaoImpl implements UserDao {
 
     private static final String SQL_INSERT_USER = "INSERT INTO users (login, password, name, surname, phone_number, status_id) values (?, ? , ? , ? , ? , ?);";
     private static final String SQL_SELECT_USER_STATUS = "SELECT status_id FROM user_statuses WHERE status = ?;";
-    private static final String SQL_SELECT_USER = "SELECT u.password, u.name, u.surname, u.phone_number, us.status FROM users u INNER JOIN user_statuses us ON u.status_id = us.status_id WHERE u.login = ?;";
+    private static final String SQL_SELECT_USER = "SELECT u.user_id, u.password, u.name, u.surname, u.phone_number, us.status FROM users u INNER JOIN user_statuses us ON u.status_id = us.status_id WHERE u.login = ?;";
+    private static final String SQL_SELECT_LOGIN = "SELECT login FROM users WHERE login = ?";
 
     ConnectionPool pool = ConnectionPool.getInstance();
 
@@ -40,9 +41,9 @@ public class UserDaoImpl implements UserDao {
                 insertStatement.setString(2, user.getPassword());
                 insertStatement.setString(3, user.getName());
                 insertStatement.setString(4, user.getSurname());
-                insertStatement.setLong(5, user.getPhoneNumber());
+                insertStatement.setString(5, user.getPhoneNumber());
                 insertStatement.setInt(6, statusId);
-                result = insertStatement.execute();
+                result = insertStatement.executeUpdate() > 0;
             }
         } catch (SQLException | ConnectionException e) {
             throw new DaoException(e);
@@ -56,7 +57,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByLogin(String login) throws DaoException {
+    public User findUserByLogin(String login) throws DaoException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -67,12 +68,13 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setString(1, login);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
+                int id = Integer.parseInt(resultSet.getString(USER_USER_ID));
                 String password = resultSet.getString(USER_PASSWORD);
                 String name = resultSet.getString(USER_NAME);
                 String surname = resultSet.getString(USER_SURNAME);
-                long phoneNumber = resultSet.getLong(USER_PHONE_NUMBER);
+                String phoneNumber = resultSet.getString(USER_PHONE_NUMBER);
                 String status = resultSet.getString(STATUS_STATUS);
-                user = new User(login, password, name, surname, phoneNumber, status);
+                user = new User(id, login, password, name, surname, phoneNumber, status);
             }
         } catch (ConnectionException | SQLException e) {
             throw new DaoException(e);
@@ -82,5 +84,29 @@ public class UserDaoImpl implements UserDao {
             pool.releaseConnection(connection);
         }
         return user;
+    }
+
+    @Override
+    public boolean isLoginExist(String login) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        boolean result = false;
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            preparedStatement = connection.prepareStatement(SQL_SELECT_LOGIN);
+            preparedStatement.setString(1, login);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                result = true;
+            }
+        } catch (SQLException | ConnectionException e) {
+            throw new DaoException("", e); //TODO
+        } finally {
+            pool.closeResultSet(resultSet);
+            pool.closeStatement(preparedStatement);
+            pool.releaseConnection(connection);
+        }
+        return result;
     }
 }
