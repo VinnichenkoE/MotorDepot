@@ -12,3 +12,7 @@ nav {
 .tab {
     margin-bottom: -20px;
 }
+.warn {
+    color: #c82333;
+    background-color: #9fcdff;
+}

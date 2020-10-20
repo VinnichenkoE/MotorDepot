@@ -23,12 +23,13 @@ public class UserDaoImpl implements UserDao {
     ConnectionPool pool = ConnectionPool.getInstance();
 
     @Override
-    public boolean saveUser(User user) throws DaoException {
+    public int saveUser(User user) throws DaoException {
         boolean result = false;
         Connection connection = null;
         PreparedStatement selectStatement = null;
         PreparedStatement insertStatement = null;
         ResultSet resultSet = null;
+        int id = 0;
         try {
             connection = pool.getConnection();
             selectStatement = connection.prepareStatement(SQL_SELECT_USER_STATUS);
@@ -43,7 +44,13 @@ public class UserDaoImpl implements UserDao {
                 insertStatement.setString(4, user.getSurname());
                 insertStatement.setString(5, user.getPhoneNumber());
                 insertStatement.setInt(6, statusId);
-                result = insertStatement.executeUpdate() > 0;
+                if (insertStatement.executeUpdate() == 0) {
+                    id = -1;
+                }
+                ResultSet idResultSet = insertStatement.getGeneratedKeys();
+                if (idResultSet.next()) {
+                    id = resultSet.getInt(1);
+                }
             }
         } catch (SQLException | ConnectionException e) {
             throw new DaoException(e);
@@ -53,7 +60,7 @@ public class UserDaoImpl implements UserDao {
             pool.closeStatement(insertStatement);
             pool.releaseConnection(connection);
         }
-        return result;
+        return id;
     }
 
     @Override

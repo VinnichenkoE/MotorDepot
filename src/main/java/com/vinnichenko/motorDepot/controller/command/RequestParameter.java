@@ -5,6 +5,7 @@ public class RequestParameter {
     private RequestParameter(){}
 
     public static final String MESSAGE = "message";
+    public static final String PARAMETERS = "parameters";
 
     public static final String USER_LOGIN = "login";
     public static final String USER_PASSWORD = "password";

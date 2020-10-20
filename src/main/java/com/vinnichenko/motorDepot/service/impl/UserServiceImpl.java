@@ -12,21 +12,21 @@ import com.vinnichenko.motorDepot.validator.DataValidator;
 
 public class UserServiceImpl implements UserService {
     @Override
-    public boolean saveUser(String login, String password, String name, String surname, String phoneNumber, String status) throws ServiceException {
+    public int saveUser(String login, String password, String name, String surname, String phoneNumber, String status) throws ServiceException {
         DaoFactory daoFactory = DaoFactory.getInstance();
         UserDao userDao = daoFactory.getUserDao();
-        boolean result = false;
+        int id = 0;
         User user;
         if (DataValidator.isUserDataValid(login, password, name, surname, phoneNumber)) {
             try {
                 String encodingPassword = PasswordEncoder.getSaltedHash(password);
                 user = new User(login, encodingPassword, name, surname, phoneNumber, status);
-                result = userDao.saveUser(user);
+                id = userDao.saveUser(user);
             } catch (UtilException | DaoException e) {
                 throw new ServiceException("", e); //TODO
             }
         }
-        return result;
+        return id;
     }
 
     @Override

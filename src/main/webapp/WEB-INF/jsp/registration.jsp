@@ -6,62 +6,99 @@
     <title>Registration</title>
     <fmt:setLocale value="${sessionScope.lang}"/>
     <fmt:setBundle basename="i18n\messages"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/main.css">
 </head>
-<div align="right">
-    <a href="/changeLanguage?lang=ru">ru </a>
-    <a href="/changeLanguage?lang=en">en</a>
-</div>
-<h4 style="color: red">${requestScope.message}</h4>
-<form action="/controller" method="post">
+<jsp:include page="header.jsp"/>
+<form action="/controller?commandName=save_user" method="post">
     <table class="table table-borderless">
         <tr>
-            <td width="200"><fmt:message key="registration.enter_login"/></td>
-            <td align="left"><input required type="text" name="login"
-                                    placeholder=
-                                    <fmt:message
-                                            key="registration.login"/> <%--pattern="[\dA-Za-zА-Яа-яЁё]{4,8}"--%>
-                                            value="${login}"></td>
-            <td align="left"><fmt:message key="registration.login_message"/>
+            <td width="200">
+                <fmt:message key="registration.enter_login"/>
+            </td>
+            <td align="left">
+                <input required type="text" name="login"
+                       placeholder="<fmt:message key="registration.login"/>" value="${parameters.login}">
+            </td>
+            <div class="warn">
+                <td align="left" style="color: #dc3545">
+                    <c:if test="${parameters.login == ''}">
+
+                        <fmt:message key="registration.login_message"/>
+
+                    </c:if>
+                </td>
+            </div>
+        </tr>
+        <tr>
+            <td width="200">
+                <fmt:message key="registration.enter_password"/>
+            </td>
+            <td align="left">
+                <input required type="password" name="password"
+                       placeholder="<fmt:message key="registration.password"/>">
+            </td>
+            <td align="left">
+                <c:if test="${parameters.password == ''}">
+                    <div class="warn">
+                        <fmt:message
+                                key="registration.password_message"/>
+                    </div>
+                </c:if>
             </td>
         </tr>
         <tr>
-            <td width="200"><fmt:message
-                    key="registration.enter_password"/></td>
-            <td align="left"><input required type="password" name="password"
-                                    placeholder="<fmt:message key="registration.password"/>">
+            <td width="200">
+                <fmt:message key="registration.enter_name"/>
             </td>
-            <td align="left"><fmt:message
-                    key="registration.password_message"/></td>
+            <td align="left">
+                <input required type="text" name="name"
+                       placeholder="<fmt:message key="registration.name"/>"
+                       value="${parameters.name}">
+            </td>
+            <td align="left">
+                <c:if test="${parameters.name == ''}">
+                    <div class="warn">
+                        <fmt:message key="registration.name_message"/>
+                    </div>
+                </c:if>
+            </td>
         </tr>
         <tr>
-            <td width="200"><fmt:message key="registration.enter_name"/></td>
-            <td align="left"><input required type="text" name="name"
-                                    placeholder="<fmt:message key="registration.name"/>"
-                                    value="${name}"></td>
-            <td align="left"><fmt:message key="registration.name_message"/></td>
-        </tr>
-        <tr>
-            <td><fmt:message key="registration.enter_surname"/></td>
+            <td>
+                <fmt:message key="registration.enter_surname"/>
+            </td>
             <td align="left"><input required type="text" name="surname"
                                     placeholder="<fmt:message key="registration.surname"/>"
-                                    value="${surname}">
+                                    value="${parameters.surname}">
             </td>
-            <td align="left"><fmt:message
-                    key="registration.surname_message"/></td>
+            <td align="left">
+                <c:if test="${parameters.surname == ''}">
+                    <div class="warn">
+                        <fmt:message key="registration.surname_message"/>
+                    </div>
+                </c:if>
+            </td>
         <tr>
-            <td><fmt:message key="registration.enter_phone_number"/></td>
+            <td>
+                <fmt:message key="registration.enter_phone_number"/>
+            </td>
             <td align="left"><input required type="text" name="phoneNumber"
                                     placeholder="<fmt:message key="registration.phone_number"/>"
-                                    value="${phoneNumber}"></td>
-            <td align="left"><fmt:message
-                    key="registration.phone_number_message"/></td>
+                                    value="${parameters.phoneNumber}">
+            </td>
+            <td align="left">
+                <c:if test="${parameters.phoneNumber == ''}">
+                    <div class="warn">
+                        <fmt:message key="registration.phone_number_message"/>
+                    </div>
+                </c:if>
+            </td>
         </tr>
         <tr>
-            <td><input type="hidden" name="commandName" value="save_user">
-        </tr>
-        <tr>
-            <td><input type="submit"
-                       value="<fmt:message key="registration.save"/>"></td>
+            <td>
+                <%--<input type="hidden" name="commandName" value="save_user">--%>
+                <input type="submit" value="<fmt:message key="registration.save"/>">
+            </td>
         </tr>
     </table>
 </form>

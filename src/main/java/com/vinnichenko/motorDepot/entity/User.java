@@ -3,6 +3,7 @@ package com.vinnichenko.motorDepot.entity;
 import java.io.Serializable;
 
 public class User implements Serializable {
+
     private int id;
     private String login;
     private String password;

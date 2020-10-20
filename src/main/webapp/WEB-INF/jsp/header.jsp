@@ -36,8 +36,14 @@
             </div>
             <div class="col-2">
                 <div class="btn-group-vertical">
-                    <a class="dropdown-item " href="/changeLanguage?lang=ru">Русский</a>
-                    <a class="dropdown-item" href="/changeLanguage?lang=en">English</a>
+                    <form action="/changeLanguage" method="get">
+                        <input type="hidden" name="lang" value="ru">
+                        <input type="submit" value="Русский">
+                    </form>
+                    <form action="/changeLanguage" method="get">
+                        <input type="hidden" name="lang" value="en">
+                        <input type="submit" value="English">
+                    </form>
                 </div>
             </div>
             <div class="col-auto">

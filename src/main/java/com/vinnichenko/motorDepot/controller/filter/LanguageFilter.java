@@ -21,7 +21,9 @@ public class LanguageFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String lang = servletRequest.getParameter(LANGUAGE_PARAMETER);
         req.getSession().setAttribute(LANGUAGE, lang);
-        ((HttpServletResponse) servletResponse).sendRedirect(req.getHeader(REFERER));
+        HttpServletResponse resp = (HttpServletResponse) servletResponse;
+        System.out.println(req.getHeader(REFERER));
+        resp.sendRedirect(req.getHeader(REFERER));
     }
 
     @Override
