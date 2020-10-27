@@ -1,6 +1,5 @@
 package com.vinnichenko.motorDepot.connection;
 
-import com.vinnichenko.motorDepot.exception.ConnectionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +20,6 @@ public final class ConnectionPool {
     private static final String DATABASE_PASSWORD = "jdbc.password";
     private static final String RESOURCE_NAME = "db";
 
-
     private BlockingQueue<ProxyConnection> freeConnections = new LinkedBlockingDeque<>(DEFAULT_POOL_SIZE);
     private Queue<ProxyConnection> usedConnections = new ArrayDeque<>();
 
@@ -32,7 +30,7 @@ public final class ConnectionPool {
             for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
                 freeConnections.add(createConnection());
             }
-        } catch (ClassNotFoundException | ConnectionException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             logger.fatal("Error connecting to database");
             throw new RuntimeException("Error connecting to database");
         }
@@ -100,19 +98,13 @@ public final class ConnectionPool {
         }
     }
 
-    private ProxyConnection createConnection() throws ConnectionException {
+    private ProxyConnection createConnection() throws SQLException {
         Connection connection;
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_NAME);
-            String url = bundle.getString(DATABASE_URL);
-            String login = bundle.getString(DATABASE_USERNAME);
-            String pass = bundle.getString(DATABASE_PASSWORD);
-            connection = DriverManager.getConnection(url, login, pass);
-        } catch (SQLException e) {
-            throw new ConnectionException("can not create connection", e);
-        } catch (MissingResourceException e) {
-            throw new ConnectionException("object for the given key can not be found", e);
-        }
+        ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_NAME);
+        String url = bundle.getString(DATABASE_URL);
+        String login = bundle.getString(DATABASE_USERNAME);
+        String pass = bundle.getString(DATABASE_PASSWORD);
+        connection = DriverManager.getConnection(url, login, pass);
         return new ProxyConnection(connection);
     }
 }
