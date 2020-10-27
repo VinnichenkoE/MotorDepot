@@ -23,7 +23,6 @@ public final class ConnectionPool {
     private BlockingQueue<ProxyConnection> freeConnections = new LinkedBlockingDeque<>(DEFAULT_POOL_SIZE);
     private Queue<ProxyConnection> usedConnections = new ArrayDeque<>();
 
-
     private ConnectionPool() {
         try {
             Class.forName(DATABASE_DRIVER);
