@@ -2,18 +2,18 @@ package com.vinnichenko.motorDepot.entity;
 
 import java.io.Serializable;
 
-public class SessionData implements Serializable {
+public class UserSessionData implements Serializable {
     int id;
     String name;
-    String status;
+    User.Role role;
 
-    public SessionData() {
+    public UserSessionData() {
     }
 
-    public SessionData(int id, String name, String status) {
+    public UserSessionData(int id, String name, User.Role role) {
         this.id = id;
         this.name = name;
-        this.status = status;
+        this.role = role;
     }
 
     public int getId() {
@@ -32,12 +32,11 @@ public class SessionData implements Serializable {
         this.name = name;
     }
 
-    public String getStatus() {
-        return status;
+    public User.Role getRole() {
+        return role;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setRole(User.Role role) {
+        this.role = role;
     }
-
 }

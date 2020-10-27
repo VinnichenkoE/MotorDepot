@@ -6,6 +6,7 @@
     <title>Add bid</title>
 </head>
 <body>
+<jsp:include page="header.jsp"/>
 <form action="controller?commandName=save_bid" method="post">
     <input type="hidden" name="user_id" value="${sessionScope.data.id}">
     <label for="number_of_seats">Количество пассажирских мест</label>
@@ -22,6 +23,5 @@
     <input type="text" name="distance" id="distance">
     <input type="submit" value="Отпавить">
 </form>
-
 </body>
 </html>

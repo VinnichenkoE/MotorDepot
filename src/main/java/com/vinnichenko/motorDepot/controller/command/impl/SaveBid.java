@@ -5,15 +5,15 @@ import com.vinnichenko.motorDepot.entity.Bid;
 import com.vinnichenko.motorDepot.exception.ServiceException;
 import com.vinnichenko.motorDepot.service.BidService;
 import com.vinnichenko.motorDepot.service.ServiceFactory;
-import com.vinnichenko.motorDepot.validator.DataValidator;
+import com.vinnichenko.motorDepot.util.DateConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 
 import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
+import static com.vinnichenko.motorDepot.controller.command.Pages.*;
 
 public class SaveBid implements Command {
     @Override
@@ -21,31 +21,24 @@ public class SaveBid implements Command {
         String stringId = req.getParameter(USER_ID);
         String stringNumberOfSeats = req.getParameter(NUMBER_OF_SEATS);
         String stringDistance = req.getParameter(DISTANCE);
-        String startDate = req.getParameter(START_DATE);
-        String endDate = req.getParameter(END_DATE);
+        String stringStartDate = req.getParameter(START_DATE);
+        String stringEndDate = req.getParameter(END_DATE);
         String startPoint = req.getParameter(START_POINT);
         String endPoint = req.getParameter(END_POINT);
-        int id = 0;
-        int numberOfSeats = 0;
-        int distance = 0;
 
-        startDate = startDate.replace('T', ' ');
-        startDate = startDate.concat(":00");
-        endDate = endDate.replace('T', ' ');
-        endDate = endDate.concat(":00");
-        id = Integer.parseInt(stringId);
-        numberOfSeats = Integer.parseInt(stringNumberOfSeats);
-        distance = Integer.parseInt(stringDistance);
-        System.out.println(startDate);
+        long startDate = DateConverter.toLong(stringStartDate);
+        long endDate = DateConverter.toLong(stringEndDate);
+        int id = Integer.parseInt(stringId);
+        int numberOfSeats = Integer.parseInt(stringNumberOfSeats);
+        int distance = Integer.parseInt(stringDistance);
 
-        Bid bid = new Bid(numberOfSeats, Timestamp.valueOf(startDate), Timestamp.valueOf(endDate), startPoint, endPoint, distance, Bid.BidStatus.PENDING);
+        Bid bid = new Bid(numberOfSeats, startDate, endDate, startPoint, endPoint, distance, Bid.BidStatus.SUBMITTED);
         BidService bidService = ServiceFactory.getInstance().getBidService();
         try {
             bidService.addBid(id, bid);
         } catch (ServiceException e) {
-            req.getRequestDispatcher("WEB-INF/jsp/error.jsp").forward(req, resp);
+            req.getRequestDispatcher(ERROR_PAGE).forward(req, resp);
         }
-        req.getRequestDispatcher("WEB=INF/jsp/account.jsp");
-
+        resp.sendRedirect("controller?commandName=account");
     }
 }

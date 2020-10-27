@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.vinnichenko.motorDepot.controller.command.Pages.*;
+
 public class WrongCommand implements Command {
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        req.getRequestDispatcher("WEB-INF/jsp/error_page.jsp").forward(req, resp);
+        req.getRequestDispatcher(ERROR_PAGE).forward(req, resp);
     }
 }

@@ -96,7 +96,7 @@
         </tr>
         <tr>
             <td>
-                <%--<input type="hidden" name="commandName" value="save_user">--%>
+                <input type="hidden" name="role" value="${param.role}">
                 <input type="submit" value="<fmt:message key="registration.save"/>">
             </td>
         </tr>

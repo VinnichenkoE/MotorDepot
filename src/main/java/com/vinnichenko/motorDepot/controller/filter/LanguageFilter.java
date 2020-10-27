@@ -5,11 +5,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
+
 import static com.vinnichenko.motorDepot.controller.command.SessionParameter.*;
 
 public class LanguageFilter implements Filter {
 
-    private static final String LANGUAGE_PARAMETER = "lang";
     private static final String REFERER = "referer";
 
     @Override
@@ -22,7 +23,6 @@ public class LanguageFilter implements Filter {
         String lang = servletRequest.getParameter(LANGUAGE_PARAMETER);
         req.getSession().setAttribute(LANGUAGE, lang);
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
-        System.out.println(req.getHeader(REFERER));
         resp.sendRedirect(req.getHeader(REFERER));
     }
 

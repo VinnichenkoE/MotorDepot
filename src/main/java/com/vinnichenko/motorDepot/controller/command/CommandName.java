@@ -10,5 +10,9 @@ public enum CommandName {
     ACCOUNT,
     APPOINT_DRIVER,
     ADD_BID,
-    SAVE_BID
+    SAVE_BID,
+    APPOINT_BID,
+    VIEW_BIDS,
+    VIEW_VEHICLES,
+    VIEW_DRIVERS
 }

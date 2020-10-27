@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.vinnichenko.motorDepot.controller.command.Pages.*;
+
 public class AddBid implements Command {
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/jsp/bid.jsp").forward(req, resp);
+        req.getRequestDispatcher(ADD_BID).forward(req, resp);
     }
 }

@@ -7,14 +7,34 @@ import java.util.Date;
 public class Bid implements Serializable {
 
     public enum BidStatus {
-        PENDING,
-        IN_PROCESS,
-        COMPLETE
+        SUBMITTED(1),
+        PENDING(2),
+        IN_PROCESS(3),
+        COMPLETED(4);
+
+        private int index;
+
+        BidStatus(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public static Bid.BidStatus getStatus(int id) {
+            for (Bid.BidStatus status : Bid.BidStatus.values()) {
+                if (status.index == id) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("invalid value of user role id"); //TODO ???
+        }
     }
     private int id;
     private int number_of_seats;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private long startDate;
+    private long endDate;
     private String startPoint;
     private String endPoint;
     private int distance;
@@ -23,7 +43,7 @@ public class Bid implements Serializable {
     public Bid() {
     }
 
-    public Bid(int number_of_seats, Timestamp startDate, Timestamp endDate, String startPoint, String endPoint, int distance, BidStatus status) {
+    public Bid(int number_of_seats, long startDate, long endDate, String startPoint, String endPoint, int distance, BidStatus status) {
         this.number_of_seats = number_of_seats;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -33,7 +53,7 @@ public class Bid implements Serializable {
         this.status = status;
     }
 
-    public Bid(int id, int number_of_seats, Timestamp startDate, Timestamp endDate, String startPoint, String endPoint, int distance, BidStatus status) {
+    public Bid(int id, int number_of_seats, long startDate, long endDate, String startPoint, String endPoint, int distance, BidStatus status) {
         this.id = id;
         this.number_of_seats = number_of_seats;
         this.startDate = startDate;
@@ -61,19 +81,19 @@ public class Bid implements Serializable {
         this.number_of_seats = number_of_seats;
     }
 
-    public Timestamp getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(long endDate) {
         this.endDate = endDate;
     }
 
@@ -118,15 +138,11 @@ public class Bid implements Serializable {
 
         if (id != bid.id) return false;
         if (number_of_seats != bid.number_of_seats) return false;
+        if (startDate != bid.startDate) return false;
+        if (endDate != bid.endDate) return false;
         if (distance != bid.distance) return false;
-        if (startDate != null ? !startDate.equals(bid.startDate) : bid.startDate != null)
-            return false;
-        if (endDate != null ? !endDate.equals(bid.endDate) : bid.endDate != null)
-            return false;
-        if (startPoint != null ? !startPoint.equals(bid.startPoint) : bid.startPoint != null)
-            return false;
-        if (endPoint != null ? !endPoint.equals(bid.endPoint) : bid.endPoint != null)
-            return false;
+        if (startPoint != null ? !startPoint.equals(bid.startPoint) : bid.startPoint != null) return false;
+        if (endPoint != null ? !endPoint.equals(bid.endPoint) : bid.endPoint != null) return false;
         return status == bid.status;
     }
 
@@ -134,8 +150,8 @@ public class Bid implements Serializable {
     public int hashCode() {
         int result = id;
         result = 31 * result + number_of_seats;
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (int) (startDate ^ (startDate >>> 32));
+        result = 31 * result + (int) (endDate ^ (endDate >>> 32));
         result = 31 * result + (startPoint != null ? startPoint.hashCode() : 0);
         result = 31 * result + (endPoint != null ? endPoint.hashCode() : 0);
         result = 31 * result + distance;
@@ -153,7 +169,7 @@ public class Bid implements Serializable {
         sb.append(", startPoint='").append(startPoint).append('\'');
         sb.append(", endPoint='").append(endPoint).append('\'');
         sb.append(", distance=").append(distance);
-        sb.append(", status='").append(status).append('\'');
+        sb.append(", status=").append(status);
         sb.append('}');
         return sb.toString();
     }

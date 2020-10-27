@@ -4,9 +4,15 @@ import com.vinnichenko.motorDepot.entity.Vehicle;
 import com.vinnichenko.motorDepot.exception.DaoException;
 
 import java.util.List;
-import java.util.Set;
 
 public interface VehicleDao {
-    Set<Vehicle> findAllUnique() throws DaoException;
-    List<Vehicle> findFreeVehiclesByNumberOfSeats(int numberOfSeats) throws DaoException;
+    List<Vehicle> findAllUnique() throws DaoException;
+
+    List<Vehicle> findFreeVehiclesByNumberOfSeats(int numberOfSeats, long startDate, long endDate) throws DaoException;
+
+    List<Vehicle> findByUserId(int userI) throws DaoException;
+
+    List<Vehicle> findAll() throws DaoException;
+
+    int saveVehicle(Vehicle vehicle) throws DaoException;
 }

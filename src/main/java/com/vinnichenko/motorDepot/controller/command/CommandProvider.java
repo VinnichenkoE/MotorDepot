@@ -21,6 +21,10 @@ public class CommandProvider {
         repository.put(CommandName.APPOINT_DRIVER, new AppointDriver());
         repository.put(CommandName.ADD_BID, new AddBid());
         repository.put(CommandName.SAVE_BID, new SaveBid());
+        repository.put(CommandName.APPOINT_BID, new AppointBid());
+        repository.put(CommandName.VIEW_BIDS, new ViewBids());
+        repository.put(CommandName.VIEW_VEHICLES, new ViewVehicles());
+        repository.put(CommandName.VIEW_DRIVERS, new ViewDrivers());
     }
 
     public static CommandProvider getInstance() {

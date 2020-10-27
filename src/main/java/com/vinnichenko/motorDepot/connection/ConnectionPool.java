@@ -1,8 +1,8 @@
 package com.vinnichenko.motorDepot.connection;
 
 import com.vinnichenko.motorDepot.exception.ConnectionException;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.*;
@@ -11,12 +11,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 
 public final class ConnectionPool {
-
-    private static ConnectionPool instance;
-    private static volatile boolean instanceIsCreated;
-
     private static final Logger logger = LogManager.getLogger(ConnectionPool.class);
-
+    private static ConnectionPool instance = new ConnectionPool();
 
     private static final int DEFAULT_POOL_SIZE = 32;
     private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -43,43 +39,37 @@ public final class ConnectionPool {
     }
 
     public static ConnectionPool getInstance() {
-        if (!instanceIsCreated) {
-            synchronized (ConnectionPool.class) {
-                if (!instanceIsCreated) {
-                    instance = new ConnectionPool();
-                    instanceIsCreated = true;
-                }
-            }
-        }
         return instance;
     }
 
-    public Connection getConnection() throws ConnectionException {
-        ProxyConnection connection;
+    public Connection getConnection() {
+        ProxyConnection connection = null;
         try {
             connection = freeConnections.take();
             usedConnections.offer(connection);
         } catch (InterruptedException e) {
-            throw new ConnectionException("can't get connection", e);
+            logger.error("Connection pool can not provide connection", e);
         }
         return connection;
     }
 
     public void releaseConnection(Connection connection) {
         if (connection instanceof ProxyConnection) {
-            usedConnections.remove(connection);
-            freeConnections.offer((ProxyConnection) connection);
+            if (usedConnections.remove(connection)) {
+                freeConnections.offer((ProxyConnection) connection);
+            }
         }
     }
 
-    public void destroyPool() throws ConnectionException {
+    public void destroyPool() {
         for (int i = 0; i < freeConnections.size(); i++) {
             try {
                 freeConnections.take().reallyClose();
+                deregisterDrivers();
             } catch (InterruptedException | SQLException e) {
-                throw new ConnectionException(e);
+                logger.error("error during destruction pool", e);
             }
-            deregisterDrivers();
+
         }
     }
 
@@ -103,14 +93,10 @@ public final class ConnectionPool {
         }
     }
 
-    private void deregisterDrivers() throws ConnectionException {
+    private void deregisterDrivers() throws SQLException {
         Iterator<Driver> iterator = DriverManager.getDrivers().asIterator();
         while (iterator.hasNext()) {
-            try {
-                DriverManager.deregisterDriver(iterator.next());
-            } catch (SQLException e) {
-                throw new ConnectionException(e);
-            }
+            DriverManager.deregisterDriver(iterator.next());
         }
     }
 
@@ -122,8 +108,10 @@ public final class ConnectionPool {
             String login = bundle.getString(DATABASE_USERNAME);
             String pass = bundle.getString(DATABASE_PASSWORD);
             connection = DriverManager.getConnection(url, login, pass);
-        } catch (SQLException | MissingResourceException e) {
-            throw new ConnectionException(e);
+        } catch (SQLException e) {
+            throw new ConnectionException("can not create connection", e);
+        } catch (MissingResourceException e) {
+            throw new ConnectionException("object for the given key can not be found", e);
         }
         return new ProxyConnection(connection);
     }

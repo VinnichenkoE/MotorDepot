@@ -3,6 +3,32 @@ package com.vinnichenko.motorDepot.entity;
 import java.io.Serializable;
 
 public class Vehicle implements Serializable {
+
+    public enum VehicleStatus {
+        READY(1),
+        REPAIR(2),
+        ON_WAY(3),
+        NOT_ASSIGNED(4);
+
+        private int index;
+
+        VehicleStatus(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public static Vehicle.VehicleStatus getStatus(int id) {
+            for (Vehicle.VehicleStatus status: Vehicle.VehicleStatus.values()) {
+                if (status.index == id) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("invalid value of user role id"); //TODO ???
+        }
+    }
     private int id;
     private String brand;
     private String model;

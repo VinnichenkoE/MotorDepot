@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <title>Account</title>
+    <title>Drivers</title>
     <fmt:setLocale value="${sessionScope.lang}"/>
     <fmt:setBundle basename="i18n\messages"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.min.css">
@@ -11,34 +11,26 @@
 </head>
 <body>
 <jsp:include page="header.jsp"/>
-<nav>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-auto">
-                <form action="controller" method="get">
-                    <input type="hidden" name="commandName" value="view_bids">
-                    <input type="submit" value="<fmt:message key="account.my_bids"/>">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-auto">
+            <c:if test="${data.role.getIndex() == 1}">
+                <form action="controller" method="post">
+                    <input type="hidden" name="commandName" value="registration">
+                    <input type="hidden" name="role" value="2">
+                    <input type="submit" value="<fmt:message key="account.add_driver"/>"/>
                 </form>
-            </div>
-            <div class="col-auto">
-                <c:if test="${data.role.getIndex() <= 2}">
-                    <form action="controller" method="get">
-                        <input type="hidden" name="commandName" value="view_vehicles">
-                        <input type="submit" value="<fmt:message key="account.vehicles"/>">
-                    </form>
-                </c:if>
-            </div>
-            <div class="col-auto">
-                <c:if test="${data.role.getIndex() == 1}">
-                    <form action="controller" method="get">
-                        <input type="hidden" name="commandName" value="view_drivers">
-                        <input type="submit" value="<fmt:message key="account.driver"/>">
-                    </form>
-                </c:if>
-            </div>
+            </c:if>
         </div>
     </div>
-</nav>
+    <div class="row">
+
+    </div>
+</div>
+
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>

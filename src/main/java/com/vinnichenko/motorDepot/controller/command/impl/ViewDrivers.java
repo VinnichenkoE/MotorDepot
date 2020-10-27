@@ -9,9 +9,9 @@ import java.io.IOException;
 
 import static com.vinnichenko.motorDepot.controller.command.Pages.*;
 
-public class Registration implements Command {
+public class ViewDrivers implements Command {
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher(REGISTRATION).forward(req, resp);
+        req.getRequestDispatcher(VIEW_DRIVERS).forward(req, resp);
     }
 }

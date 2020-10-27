@@ -10,34 +10,38 @@ import com.vinnichenko.motorDepot.util.PasswordEncoder;
 import com.vinnichenko.motorDepot.util.exception.UtilException;
 import com.vinnichenko.motorDepot.validator.DataValidator;
 
+import java.util.Map;
+import java.util.Optional;
+
+import static com.vinnichenko.motorDepot.controller.command.RequestParameter.*;
+
 public class UserServiceImpl implements UserService {
     @Override
-    public int saveUser(String login, String password, String name, String surname, String phoneNumber, String status) throws ServiceException {
+    public int saveUser(Map<String, String> parameters, User.Role role) throws ServiceException {
         DaoFactory daoFactory = DaoFactory.getInstance();
         UserDao userDao = daoFactory.getUserDao();
         int id = 0;
         User user;
-        if (DataValidator.isUserDataValid(login, password, name, surname, phoneNumber)) {
-            try {
-                String encodingPassword = PasswordEncoder.getSaltedHash(password);
-                user = new User(login, encodingPassword, name, surname, phoneNumber, status);
-                id = userDao.saveUser(user);
-            } catch (UtilException | DaoException e) {
-                throw new ServiceException("", e); //TODO
-            }
+        try {
+            String encodingPassword = PasswordEncoder.getSaltedHash(parameters.get(USER_PASSWORD));
+            user = new User(parameters.get(USER_LOGIN), parameters.get(USER_NAME),
+                    parameters.get(USER_SURNAME), parameters.get(USER_PHONE_NUMBER), role);
+            id = userDao.saveUser(user, encodingPassword);
+        } catch (UtilException | DaoException e) {
+            throw new ServiceException("", e); //TODO
         }
         return id;
     }
 
     @Override
-    public User findUserByLogin(String login) throws ServiceException {
+    public Optional<User> findUserByLogin(String login) throws ServiceException {
         DaoFactory daoFactory = DaoFactory.getInstance();
         UserDao userDao = daoFactory.getUserDao();
-        User user;
+        Optional<User> user;
         try {
             user = userDao.findUserByLogin(login);
         } catch (DaoException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("", e); //TODO
         }
         return user;
     }
@@ -48,10 +52,23 @@ public class UserServiceImpl implements UserService {
         UserDao userDao = daoFactory.getUserDao();
         boolean result;
         try {
-            result = userDao.isLoginExist(login);
+            result = userDao.checkLogin(login);
         } catch (DaoException e) {
             throw new ServiceException("", e); //TODO
         }
         return result;
+    }
+
+    @Override
+    public String findPassword(String login) throws ServiceException {
+        DaoFactory daoFactory = DaoFactory.getInstance();
+        UserDao userDao = daoFactory.getUserDao();
+        String password = null;
+        try {
+            password = userDao.findPassword(login);
+        } catch (DaoException e) {
+            throw new ServiceException("", e);  //TODO
+        }
+        return password;
     }
 }
